@@ -8,7 +8,7 @@
       <h3 class="job-title">{{ job.name }}</h3>
       <p class="job-desc">
         {{ job.category }} &bull; {{ job.city }} &bull; {{ job.state }} &bull;
-        {{ job.country }} &bull; {{ job.type }} 
+        {{ job.country }} &bull; {{ job.type }}
         <remoto v-if="job.remote == true"> &bull; Remoto </remoto>
       </p>
     </div>
@@ -31,7 +31,39 @@
     <div v-if="controller == 'detalhes'" class="content">
       {{ job.description }}
     </div>
-    <div v-if="controller == 'candidatar'" class="content">candidatar</div>
+    <div v-if="controller == 'candidatar'" class="content">
+      <form class="form" @submit.prevent>
+        <h3 class="form-title">Informações pessoais</h3>
+        <div class="form-row">
+          <div class="form-input">
+            <p class="input-label">Nome</p>
+            <input type="text" required v-model="nome" />
+          </div>
+          <div class="form-input">
+            <p class="input-label">Sobrenome</p>
+            <input type="text" required v-model="sobrenome" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-input">
+            <p class="input-label">E-mail</p>
+            <input type="text" required v-model="email" />
+          </div>
+          <div class="form-input">
+            <p class="input-label">Telefone</p>
+            <input type="text" required v-model="telefone" />
+          </div>
+        </div>
+        <label class="input-label">Currículo</label>
+        <input type="file" required @change="handleFileChange" />
+        <input
+          class="form-submit"
+          type="submit"
+          value="Enviar minha candidatura"
+          @click="test()"
+        />
+      </form>
+    </div>
   </div>
 </template>
 
@@ -41,8 +73,13 @@ export default {
     return {
       baseUrl: "http://localhost:8000/api/",
       job: {
-        name: null
+        name: null,
       },
+      nome: null,
+      sobrenome: null,
+      email: null,
+      telefone: null,
+      curriculo: null,
       controller: "detalhes",
     };
   },
@@ -53,6 +90,21 @@ export default {
       })
         .then((res) => res.json())
         .then((res) => (this.job = res));
+    },
+    postApplication: function () {
+      let token = localStorage.getItem("Jwt");
+      fetch(this.baseUrl + "application", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    },
+    handleFileChange: function (e) {
+      var files = e.target.files || e.dataTransfer.files;
+      if (!files.length) return;
+      this.curriculo = files[0]
     },
     setController: function (value) {
       this.controller = value;
@@ -135,8 +187,68 @@ export default {
 }
 
 .content {
+  width: 50%;
   margin-top: 50px;
   color: gray;
+}
+
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.form-title {
+  text-align: start;
+  font-weight: 400;
+  width: 100%;
+  border-bottom: 1px solid rgba(168, 167, 167, 0.438);
+  padding-bottom: 5px;
+  margin-bottom: 40px;
+}
+
+.form-input {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-input input {
+  width: 95%;
+  height: 30px;
+  border: 1px solid rgba(150, 150, 150, 0.377);
+  border-radius: 5px;
+  margin-bottom: 20px;
+  outline: none;
+  color: gray;
+  padding-left: 10px;
+}
+
+.input-label {
+  text-align: start;
+  margin-bottom: 5px;
+}
+
+.form-submit {
+  background-color: #d9013e;
+  color: white;
+  border: none;
+  margin-top: 25px;
+  height: 50px;
+  border-radius: 10px;
+  outline: none;
+  font-size: 16px;
+}
+
+.form-submit:hover {
+  cursor: pointer;
 }
 
 .loading {
