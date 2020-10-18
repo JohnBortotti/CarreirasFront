@@ -6,16 +6,18 @@
     <div class="login-box">
       <img src="../assets/icon.png" class="icon" />
       <h3 class="title">Aquisição de talentos</h3>
+      <form @submit.prevent="login(email, password)">
       <p class="field-name">E-mail</p>
       <input type="text" class="inputField" v-model="email" required />
       <p class="field-name">Senha</p>
-      <input type="text" class="inputField" v-model="password" required />
+      <input type="password" class="inputField" v-model="password" required />
+      <p class="error" v-if="error == true">Credenciais invalidas!</p>
       <input
         type="submit"
         class="button"
         value="Entrar"
-        @click="login(email, password)"
       />
+      </form>
     </div>
   </div>
 </template>
@@ -28,10 +30,11 @@ export default {
       email: null,
       password: null,
       loading: false,
+      error: false,
     };
   },
   methods: {
-    login: async function (email, password) {
+    login: function (email, password) {
       this.setLoading(true);
       fetch(this.baseUrl + "auth/login", {
         method: "POST",
@@ -40,18 +43,27 @@ export default {
       })
         .then((res) => res.json())
         .then((res) => {
-          console.log(res);
           if (!res.access_token) {
             console.log(res);
-            return this.setLoading(false);
+            this.setLoading(false);
+            return (this.error = true);
           }
           localStorage.setItem("Jwt", res.access_token);
           this.$router.push("/");
         });
     },
+    verifyLogin: function () {
+      let token = localStorage.getItem("Jwt");
+      if (token) {
+        return this.$router.push("/");
+      }
+    },
     setLoading: function (value) {
       this.loading = value;
     },
+  },
+  mounted: function () {
+    this.verifyLogin();
   },
 };
 </script>
@@ -147,6 +159,12 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.error {
+  color: #d9013e;
+  margin-bottom: 20px;
+  font-weight: 600;
 }
 
 @keyframes spinLoader {

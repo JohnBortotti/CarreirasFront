@@ -37,6 +37,7 @@
         v-for="job in jobs"
         :key="job.id"
         v-bind:id="job.id"
+        @click="$router.push(`/job/${job.id}`);"
       >
         <div class="job-card">
           <div class="job-card-time">
@@ -44,8 +45,8 @@
           </div>
           <div class="job-card-title">{{ job.name }}</div>
           <div class="job-card-desc">
-            {{ job.category }} - {{ job.city }}, {{ job.state }},
-            {{ job.country }}
+            {{ job.category }} &bull; {{ job.city }}, {{ job.state }},
+            {{ job.country }} &bull; {{ job.type }} <remoto v-if="job.remote == true"> &bull; Remoto </remoto>
           </div>
         </div>
       </div>
@@ -65,12 +66,12 @@ export default {
     };
   },
   methods: {
-    fetchJobs: async function () {
+    fetchJobs: function () {
       fetch(this.baseUrl + "job")
         .then((res) => res.json())
         .then((res) => (this.jobs = res));
     },
-    searchJobs: async function (filter, value) {
+    searchJobs: function (filter, value) {
       this.noResults = false;
       if (value.length == 0) this.fetchJobs();
       this.jobs = [];

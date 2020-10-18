@@ -7,6 +7,7 @@
       <p class="nav-user" v-if="userName != null">
         Olá, <strong> {{ userName }}!</strong>
       </p>
+      <img class="logout" v-if="userName != null" src="../assets/logout.png" @click="logout()"/>
     </div>
   </nav>
 </template>
@@ -21,10 +22,11 @@ export default {
     return {
       baseUrl: "http://localhost:8000/api/",
       userName: null,
+      componentKey: 0,
     };
   },
   methods: {
-    verifyLogin: async function () {
+    verifyLogin: function () {
       let token = localStorage.getItem("Jwt");
       fetch(this.baseUrl + "auth/me", {
         method: "POST",
@@ -38,11 +40,28 @@ export default {
           console.log(res);
           if (res.id) {
             this.userName = res.name;
+            this.$location
           }
         });
     },
+    logout: function () {
+      let token = localStorage.getItem("Jwt");
+      fetch(this.baseUrl + "auth/logout", {
+        methood: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      localStorage.removeItem("Jwt");
+      this.$router.push("/login");
+      this.$forceUpdate();
+    },
   },
   mounted: function () {
+    this.verifyLogin();
+  },
+  updated: function () {
     this.verifyLogin();
   },
 };
@@ -80,6 +99,15 @@ nav {
 }
 
 .login:hover {
+  cursor: pointer;
+}
+
+.logout {
+  width: 16px;
+  margin-left: 10px;
+}
+
+.logout:hover {
   cursor: pointer;
 }
 </style>
