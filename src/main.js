@@ -5,6 +5,7 @@ import VueRouter from 'vue-router';
 import Home from './views/Home'
 import Login from './views/Login'
 import Job from './views/Job'
+import CreateJob from './views/CreateJob'
 
 Vue.config.productionTip = false
 
@@ -14,7 +15,8 @@ Vue.use(VueRouter)
 const routes = [ // define as rotas e os componentes
   { path: '/', component: Home, },
   { path: '/login', component: Login },
-  { path: '/job/:id', component: Job, props: true }
+  { path: '/job/:id', component: Job, props: true },
+  { path: '/job/', component: CreateJob }
 ];
 
 const router = new VueRouter({ // instancia o router

@@ -133,7 +133,7 @@ export default {
           } else {
             this.success = true;
           }
-          return this.loading = false;
+          return (this.loading = false);
         });
     },
     handleFileChange: function (e) {
@@ -320,6 +320,51 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+@media screen and (max-width: 850px) {
+  .controllers-content {
+    width: 40%;
+  }
+}
+
+@media screen and (max-width: 550px) {
+  .back {
+    width: 15px;
+    margin-left: -10px;
+  }
+
+  .job-title {
+    font-size: 14px;
+  }
+
+  .controllers-content {
+    font-size: 12px;
+    width: 80%;
+  }
+
+  .content {
+    width: 90%;
+  }
+
+  .form-row {
+    flex-direction: column;
+    width: 90%;
+  }
+
+  .form-input {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-row input {
+    width: 100%;
+  }
+
+  .form-submit {
+    margin-bottom: 40px;
+  }
 }
 
 @keyframes spinLoader {

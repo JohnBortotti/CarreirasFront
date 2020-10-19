@@ -3,7 +3,7 @@
     <button
       class="new-job"
       v-if="userName != null"
-      @click="$router.push('/')"
+      @click="$router.push('/job')"
     >
       + Nova Vaga
     </button>
@@ -49,10 +49,11 @@ export default {
       })
         .then((res) => res.json())
         .then((res) => {
-          console.log(res);
           if (res.id) {
             this.userName = res.name;
-            this.$location;
+          }
+          if (res.status == "Token is Expired") {
+            localStorage.removeItem("Jwt")
           }
         });
     },
