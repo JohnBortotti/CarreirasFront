@@ -363,7 +363,7 @@ export default {
   }
 
   .form-submit {
-    margin-bottom: 40px;
+    margin-bottom: 30px;
   }
 }
 

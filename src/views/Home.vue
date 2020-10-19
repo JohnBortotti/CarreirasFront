@@ -37,17 +37,20 @@
         v-for="job in jobs"
         :key="job.id"
         v-bind:id="job.id"
-        @click="$router.push(`/job/${job.id}`);"
       >
-        <div class="job-card">
-          <div class="job-card-time">
-            {{ `Publicado há ${getRelativeTime(job.created_at)} dia(s)` }}
+        <div>
+          <div class="job-card" @click="callJobPage(job.id)">
+            <div class="job-card-time">
+              {{ `Publicado há ${getRelativeTime(job.created_at)} dia(s)` }}
+            </div>
+            <div class="job-card-title">{{ job.name }}</div>
+            <div class="job-card-desc">
+              {{ job.category }} &bull; {{ job.city }}, {{ job.state }},
+              {{ job.country }} &bull; {{ job.type }}
+              <span v-if="job.remote == true"> &bull; Remoto </span>
+            </div>
           </div>
-          <div class="job-card-title">{{ job.name }}</div>
-          <div class="job-card-desc">
-            {{ job.category }} &bull; {{ job.city }}, {{ job.state }},
-            {{ job.country }} &bull; {{ job.type }} <remoto v-if="job.remote == true"> &bull; Remoto </remoto>
-          </div>
+          <img src="../assets/delete.png" class="job-card-delete" v-if="token != null" @click="deleteJob(job.id)"/>
         </div>
       </div>
     </div>
@@ -63,6 +66,7 @@ export default {
       searchValue: null,
       filter: "name",
       noResults: false,
+      token: null,
     };
   },
   methods: {
@@ -95,9 +99,26 @@ export default {
       var diff = (+today - +createdAt) / msInDay;
       return diff;
     },
+    deleteJob: async function (id) {
+      this.jobs = [];
+      let token = localStorage.getItem('Jwt')
+      await fetch(this.baseUrl + `job/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      await this.fetchJobs()
+    },
+    getToken: function () {
+      let token = localStorage.getItem("Jwt");
+      return (this.token = token);
+    },
+    callJobPage(id) {
+      this.$router.push(`/job/${id}`);
+    },
   },
   mounted: function () {
     this.fetchJobs();
+    this.getToken();
   },
 };
 </script>
@@ -221,6 +242,17 @@ export default {
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
 
+.job-card-delete {
+  position: absolute;
+  margin-top: -130px;
+  right: 11%;
+  width: 25px;
+}
+
+.job-card-delete:hover {
+  cursor: pointer;
+}
+
 .job-card-time {
   color: #767f88;
   font-size: 14px;
@@ -289,10 +321,14 @@ export default {
   .job-card-desc {
     font-size: 12px;
   }
+
+  .job-card-delete {
+    width: 20px;
+  }
 }
 
 @media screen and (max-width: 280px) {
-  .title  {
+  .title {
     font-size: 14px;
   }
 

@@ -114,7 +114,6 @@ export default {
       })
         .then((res) => res.json())
         .then((res) => {
-          console.log(res);
           if (!res.created_at) {
             this.error = true;
             this.errorMessage = res;
