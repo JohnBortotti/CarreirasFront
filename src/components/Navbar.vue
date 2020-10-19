@@ -1,5 +1,12 @@
 <template>
   <nav>
+    <button
+      class="new-job"
+      v-if="userName != null"
+      @click="$router.push('/')"
+    >
+      + Nova Vaga
+    </button>
     <div class="nav-content">
       <p class="login" v-if="userName == null" @click="$router.push('/login')">
         Login
@@ -7,7 +14,12 @@
       <p class="nav-user" v-if="userName != null">
         Olá, <strong> {{ userName }}!</strong>
       </p>
-      <img class="logout" v-if="userName != null" src="../assets/logout.png" @click="logout()"/>
+      <img
+        class="logout"
+        v-if="userName != null"
+        src="../assets/logout.png"
+        @click="logout()"
+      />
     </div>
   </nav>
 </template>
@@ -40,7 +52,7 @@ export default {
           console.log(res);
           if (res.id) {
             this.userName = res.name;
-            this.$location
+            this.$location;
           }
         });
     },
@@ -52,7 +64,7 @@ export default {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-      })
+      });
       localStorage.removeItem("Jwt");
       this.$router.push("/login");
       this.$forceUpdate();
@@ -93,6 +105,20 @@ nav {
   justify-content: flex-end;
 }
 
+.new-job {
+  background-color: white;
+  color: #d9013e;
+  border: 2px solid #d9013e;
+  width: 100px;
+  border-radius: 8px;
+  padding: 5px;
+  outline: none
+}
+
+.new-job:hover {
+  cursor: pointer;
+}
+
 .login {
   color: #d9013e;
   font-weight: 700;
@@ -109,5 +135,16 @@ nav {
 
 .logout:hover {
   cursor: pointer;
+}
+ 
+@media screen and (max-width: 600px) {
+  .new-job {
+    margin-left: 30px;
+    width: 115px;
+  }
+
+  .logout  {
+    margin-right: 20px;
+  }
 }
 </style>

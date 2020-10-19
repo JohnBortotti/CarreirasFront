@@ -275,7 +275,7 @@ export default {
   }
 
   .job-card {
-    height: 100px;
+    height: 120px;
   }
 
   .job-card-title {
@@ -291,7 +291,7 @@ export default {
   }
 }
 
-@media screen and (max-width: 290px) {
+@media screen and (max-width: 280px) {
   .title  {
     font-size: 14px;
   }
