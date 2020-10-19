@@ -232,6 +232,7 @@ export default {
 .input-label {
   text-align: start;
   margin-bottom: 5px;
+  color: gray;
 }
 
 .form-submit {
@@ -301,6 +302,10 @@ export default {
   }
 
   .content {
+    width: 90%;
+  }
+
+  .form {
     width: 90%;
   }
 

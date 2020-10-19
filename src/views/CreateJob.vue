@@ -206,6 +206,7 @@ export default {
 
 .input-label {
   text-align: start;
+  color: gray;
   margin-bottom: 5px;
 }
 
@@ -279,6 +280,10 @@ export default {
     width: 90%;
   }
 
+  .form {
+    width: 90%;
+  }
+
   .form-row {
     flex-direction: column;
     width: 90%;
@@ -298,6 +303,7 @@ export default {
     margin-bottom: 30px;
   }
 }
+
 
 @keyframes spinLoader {
   0% {
