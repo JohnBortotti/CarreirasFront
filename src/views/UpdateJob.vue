@@ -5,7 +5,7 @@
     </div>
     <div class="header">
       <img src="../assets/arrow.png" class="back" @click="$router.push('/')" />
-      <h3 class="title">Cadastrar nova vaga</h3>
+      <h3 class="title">Atualizar vaga</h3>
     </div>
     <form class="form" @submit.prevent>
       <div class="form-row">
@@ -53,11 +53,13 @@
       <input
         class="form-submit"
         type="submit"
-        value="Cadastrar Vaga"
-        @click="postJob()"
+        value="Atualizar Vaga"
+        @click="updateJob()"
       />
     </form>
-    <div class="succcess" v-if="success == true">Vaga criada com sucesso!</div>
+    <div class="succcess" v-if="success == true">
+      Vaga atualizada com sucesso!
+    </div>
     <div class="error" v-if="error == true">{{ errorMessage }}</div>
   </div>
 </template>
@@ -88,44 +90,67 @@ export default {
         this.$router.push("/");
       }
     },
-    postJob: function () {
+    fetchJob: function () {
+      this.loading = true;
+      fetch(this.baseUrl + `job/${this.id}`)
+        .then((res) => res.json())
+        .then((res) => {
+          this.nome = res.name;
+          this.pais = res.country;
+          this.cidade = res.city;
+          this.estado = res.state;
+          this.departamento = res.category;
+          this.tipo = res.type;
+          this.descricao = res.description;
+          return (this.loading = false);
+        });
+    },
+    updateJob: function () {
       (this.success = false),
         (this.error = false),
         (this.errorMessage = {}),
         (this.loading = true);
 
       let token = localStorage.getItem("Jwt");
-      fetch(this.baseUrl + "job", {
-        method: "POST",
+      fetch(this.baseUrl + `job/${this.id}`, {
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: this.nome,
-          city: this.cidade,
           state: this.estado,
+          city: this.cidade,
           country: this.pais,
           category: this.departamento,
           type: this.tipo,
           remote: this.remoto,
           description: this.descricao,
         }),
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          if (!res.created_at) {
+      }).then((res) => {
+        console.log(res);
+        if (res.status == 204) {
+          this.success = true;
+        } else {
+          res.json().then((res) => {
             this.error = true;
             this.errorMessage = res;
-          } else {
-            this.success = true;
-          }
-          return (this.loading = false);
-        });
+          });
+        }
+        return (this.loading = false);
+      });
     },
   },
   mounted: function () {
     this.verifyToken();
+    this.fetchJob();
+  },
+  props: {
+    id: {
+      type: String,
+      required: true,
+    },
   },
 };
 </script>

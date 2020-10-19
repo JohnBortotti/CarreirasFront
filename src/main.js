@@ -6,6 +6,7 @@ import Home from './views/Home'
 import Login from './views/Login'
 import Job from './views/Job'
 import CreateJob from './views/CreateJob'
+import UpdateJob from './views/UpdateJob'
 
 Vue.config.productionTip = false
 
@@ -16,6 +17,7 @@ const routes = [ // define as rotas e os componentes
   { path: '/', component: Home, },
   { path: '/login', component: Login },
   { path: '/job/:id', component: Job, props: true },
+  { path: '/job/update/:id', component: UpdateJob, props: true },
   { path: '/job/', component: CreateJob }
 ];
 

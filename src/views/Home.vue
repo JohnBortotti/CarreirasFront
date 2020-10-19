@@ -50,7 +50,18 @@
               <span v-if="job.remote == true"> &bull; Remoto </span>
             </div>
           </div>
-          <img src="../assets/delete.png" class="job-card-delete" v-if="token != null" @click="deleteJob(job.id)"/>
+          <img
+            src="../assets/edit.png"
+            class="job-card-edit"
+            v-if="token != null"
+            @click="updateJob(job.id)"
+          />
+          <img
+            src="../assets/delete.png"
+            class="job-card-delete"
+            v-if="token != null"
+            @click="deleteJob(job.id)"
+          />
         </div>
       </div>
     </div>
@@ -101,18 +112,22 @@ export default {
     },
     deleteJob: async function (id) {
       this.jobs = [];
-      let token = localStorage.getItem('Jwt')
+      let token = localStorage.getItem("Jwt");
       await fetch(this.baseUrl + `job/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      await this.fetchJobs()
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      await this.fetchJobs();
+    },
+    updateJob: function (id) {
+      this.$router.push(`/job/update/${id}`)
     },
     getToken: function () {
       let token = localStorage.getItem("Jwt");
       return (this.token = token);
     },
     callJobPage(id) {
+      this.$router.push("/");
       this.$router.push(`/job/${id}`);
     },
   },
@@ -242,6 +257,18 @@ export default {
   box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
 
+.job-card-edit {
+  position: absolute;
+  margin-top: -130px;
+  margin-right: 30px;
+  right: 11%;
+  width: 25px;
+}
+
+.job-card-edit:hover {
+  cursor: pointer;
+}
+
 .job-card-delete {
   position: absolute;
   margin-top: -130px;
@@ -250,6 +277,10 @@ export default {
 }
 
 .job-card-delete:hover {
+  cursor: pointer;
+}
+
+.job-card-edit:hover {
   cursor: pointer;
 }
 
@@ -323,6 +354,9 @@ export default {
   }
 
   .job-card-delete {
+    width: 20px;
+  }
+  .job-card-edit {
     width: 20px;
   }
 }
