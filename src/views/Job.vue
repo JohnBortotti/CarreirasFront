@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <div class="loading-background" v-if="job.name == null">
-      <span class="loading" v-if="job.name == null"></span>
+    <div class="loading-background" v-if="job.name == null || loading == true">
+      <span class="loading" v-if="job.name == null || loading == true"></span>
     </div>
     <div class="header">
       <img src="../assets/arrow.png" class="back" @click="$router.push('/')" />
@@ -37,21 +37,21 @@
         <div class="form-row">
           <div class="form-input">
             <p class="input-label">Nome</p>
-            <input type="text" required v-model="nome" />
+            <input type="text" required v-model="application.nome" />
           </div>
           <div class="form-input">
             <p class="input-label">Sobrenome</p>
-            <input type="text" required v-model="sobrenome" />
+            <input type="text" required v-model="application.sobrenome" />
           </div>
         </div>
         <div class="form-row">
           <div class="form-input">
             <p class="input-label">E-mail</p>
-            <input type="text" required v-model="email" />
+            <input type="text" required v-model="application.email" />
           </div>
           <div class="form-input">
             <p class="input-label">Telefone</p>
-            <input type="text" required v-model="telefone" />
+            <input type="text" required v-model="application.telefone" />
           </div>
         </div>
         <label class="input-label">Currículo</label>
@@ -60,8 +60,14 @@
           class="form-submit"
           type="submit"
           value="Enviar minha candidatura"
-          @click="test()"
+          @click="postApplication()"
         />
+        <div class="succcess" v-if="success == true">
+          Candidatura enviada com sucesso!
+        </div>
+        <div class="error" v-if="error == true">
+          {{ errorMessage }}
+        </div>
       </form>
     </div>
   </div>
@@ -75,12 +81,18 @@ export default {
       job: {
         name: null,
       },
-      nome: null,
-      sobrenome: null,
-      email: null,
-      telefone: null,
-      curriculo: null,
+      application: {
+        nome: null,
+        sobrenome: null,
+        email: null,
+        telefone: null,
+        curriculo: null,
+      },
       controller: "detalhes",
+      success: false,
+      error: false,
+      errorMessage: {},
+      loading: false,
     };
   },
   methods: {
@@ -92,19 +104,42 @@ export default {
         .then((res) => (this.job = res));
     },
     postApplication: function () {
+      this.success = false;
+      this.error = false;
+      this.errorMessage = {};
+
+      this.loading = true;
+
       let token = localStorage.getItem("Jwt");
+      let data = new FormData();
+
+      data.append("name", this.application.nome);
+      data.append("surname", this.application.sobrenome);
+      data.append("email", this.application.email);
+      data.append("phone", this.application.telefone);
+      data.append("cv", this.application.curriculo);
+      data.append("job_id", this.job.id);
+
       fetch(this.baseUrl + "application", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+        headers: { Authorization: `Bearer ${token}` },
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (!res.created_at) {
+            this.error = true;
+            this.errorMessage = res;
+          } else {
+            this.success = true;
+          }
+          return this.loading = false;
+        });
     },
     handleFileChange: function (e) {
       var files = e.target.files || e.dataTransfer.files;
       if (!files.length) return;
-      this.curriculo = files[0]
+      this.application.curriculo = files[0];
     },
     setController: function (value) {
       this.controller = value;
@@ -249,6 +284,17 @@ export default {
 
 .form-submit:hover {
   cursor: pointer;
+}
+
+.succcess {
+  color: rgb(4, 143, 4);
+  margin-top: 30px;
+  font-weight: 600;
+}
+.error {
+  color: red;
+  margin-top: 30px;
+  font-weight: 600;
 }
 
 .loading {
