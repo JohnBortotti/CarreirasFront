@@ -33,3 +33,4 @@ Também é possivel atualizar vagas já existentes, ou exclui-lás.
 
 #### Todo
 - [ ] Implementação de rich text editor -> Melhor diagramação e visualização das descrições das vagas.
+- [ ] Implementação de uma interface para visualização das aplicações para cada vaga -> Usuário poderá listar todas as aplicações de cada vaga, e realizar o download do arquivo de currículo.
